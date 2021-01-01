@@ -4,12 +4,14 @@
 
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+#datetime is just a datatype we need to import, in the same way we import math
 from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
+#creating a class that represents our TODO
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
@@ -22,7 +24,7 @@ class Todo(db.Model):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    if (request.method == "POST"):
+    if request.method == "POST":
         task_content = request.form['content']
         new_task = Todo(content=task_content)
 
@@ -37,6 +39,7 @@ def index():
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks=tasks)
 
+#Same idea as app.use or @requestmapping("/") we can also specify what methods we want to allow
 @app.route("/delete/<int:id>")
 def delete(id):
     task_to_delete = Todo.query.get_or_404(id)
