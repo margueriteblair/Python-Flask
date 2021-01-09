@@ -1,25 +1,25 @@
-#pip is a package manager for python
-#to install a package, we'll use the command 'pip3 install ${packageName}'
-#we installed both flask-sqlalchemy and flask as packages here
+# pip is a package manager for python
+# to install a package, we'll use the command 'pip3 install ${packageName}'
+# we installed both flask-sqlalchemy and flask as packages here
 
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-#datetime is just a datatype we need to import, in the same way we import math
+# datetime is just a datatype we need to import, in the same way we import math
 from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
-#creating a class that represents our TODO
+
+# creating a class that represents our TODO
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Task %r>' %self.id
-
+        return '<Task %r>' % self.id
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -39,7 +39,8 @@ def index():
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks=tasks)
 
-#Same idea as app.use or @requestmapping("/") we can also specify what methods we want to allow
+
+# Same idea as app.use or @requestmapping("/") we can also specify what methods we want to allow
 @app.route("/delete/<int:id>")
 def delete(id):
     task_to_delete = Todo.query.get_or_404(id)
@@ -49,6 +50,7 @@ def delete(id):
         return redirect("/")
     except:
         return "There was a problem deleting the task"
+
 
 @app.route("/update/<int:id>", methods=['GET', 'POST'])
 def update(id):
@@ -63,6 +65,7 @@ def update(id):
             return "There was an issue updating your task"
     else:
         return render_template("update.html", task=task)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
